@@ -6,14 +6,15 @@ import java.util.List;
 
 public interface StudentService {
 
+    Student createStudent(Student student);
+    Student updateStudent(Long id, Student student);
+
     List<Student> getAllStudents();
 
     Student getStudentById(Long id);
 
-    Student createStudent(Student student);
-
-    Student updateStudent(Long id, Student student);
-
     void deleteStudent(Long id);
+
+    boolean isExists(Long id);
 
 }

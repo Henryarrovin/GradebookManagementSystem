@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/GradebookManagementSystem.iml" filepath="$PROJECT_DIR$/.idea/GradebookManagementSystem.iml" />
-      <module fileurl="file://$PROJECT_DIR$/gradebook-management-system/gradebook-management-system.iml" filepath="$PROJECT_DIR$/gradebook-management-system/gradebook-management-system.iml" />
     </modules>
   </component>
 </project>
