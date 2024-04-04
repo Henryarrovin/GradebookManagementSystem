@@ -6,6 +6,7 @@ import com.project.gradebookmanagementsystem.services.StudentService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -24,7 +25,15 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student updateStudent(Long id, Student student) {
-        return studentRepository.save(student);
+        student.setId(id);
+        return studentRepository.findById(id)
+                .map(existingStudent -> {
+                    Optional.ofNullable(student.getFirstName()).ifPresent(existingStudent::setFirstName);
+                    Optional.ofNullable(student.getLastName()).ifPresent(existingStudent::setLastName);
+                    Optional.ofNullable(student.getEmail()).ifPresent(existingStudent::setEmail);
+                    Optional.ofNullable(student.getDateOfBirth()).ifPresent(existingStudent::setDateOfBirth);
+                    return studentRepository.save(existingStudent);
+                }).orElseThrow(() -> new RuntimeException("Student not found"));
     }
 
     @Override

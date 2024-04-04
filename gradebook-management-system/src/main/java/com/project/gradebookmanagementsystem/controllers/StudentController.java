@@ -30,6 +30,13 @@ public class StudentController {
 
     @PostMapping("/create-student")
     public ResponseEntity<StudentDto> createStudent(@RequestBody StudentDto studentDto) {
+
+        if (studentDto.getFirstName() == null ||
+                studentDto.getLastName() == null ||
+                studentDto.getEmail() == null ||
+                studentDto.getDateOfBirth() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         Student student = studentMapper.mapFrom(studentDto);
         Student createdStudent = studentService.createStudent(student);
         return new ResponseEntity<>(studentMapper.mapTo(createdStudent), HttpStatus.CREATED);
@@ -42,7 +49,6 @@ public class StudentController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        studentDto.setId(id);
         Student student = studentMapper.mapFrom(studentDto);
         Student updatedStudent = studentService.updateStudent(id, student);
         return new ResponseEntity<>(studentMapper.mapTo(updatedStudent), HttpStatus.OK);
