@@ -1,1 +1,1 @@
-#This is a project for creating gradebook management system.#
+This is a project for creating a gradebook management system.
