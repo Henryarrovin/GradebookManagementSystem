@@ -1,6 +1,7 @@
 package com.project.gradebookmanagementsystem.services.impl;
 
 import com.project.gradebookmanagementsystem.models.Student;
+import com.project.gradebookmanagementsystem.models.Teacher;
 import com.project.gradebookmanagementsystem.repositories.StudentRepository;
 import com.project.gradebookmanagementsystem.services.StudentService;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,11 @@ public class StudentServiceImpl implements StudentService {
         this.studentRepository = studentRepository;
     }
 
+
+    @Override
+    public Student findByStudentIdAndName(Long id, String name) {
+        return studentRepository.findByIdAndFirstName(id, name);
+    }
 
     @Override
     public Student createStudent(Student student) {

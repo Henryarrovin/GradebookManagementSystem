@@ -25,8 +25,17 @@ public class TeacherController {
         this.teacherMapper = teacherMapper;
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<TeacherDto> loginTeacher(@RequestBody TeacherDto teacherDto) {
+        Teacher teacher = teacherService.findByTeacherIdAndName(teacherDto.getId(), teacherDto.getFirstName());
+        if (teacher == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(teacherMapper.mapTo(teacher), HttpStatus.OK);
+    }
+
     @PostMapping("/create-teacher")
-    public ResponseEntity<TeacherDto> createTeacher(TeacherDto teacherDto) {
+    public ResponseEntity<TeacherDto> createTeacher(@RequestBody TeacherDto teacherDto) {
 
         if (teacherDto.getFirstName() == null ||
                 teacherDto.getLastName() == null ||

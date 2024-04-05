@@ -17,6 +17,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public Teacher findByTeacherIdAndName(Long id, String name) {
+        return teacherRepository.findByIdAndFirstName(id, name);
+    }
+
+    @Override
     public Teacher createTeacher(Teacher teacher) {
         return teacherRepository.save(teacher);
     }

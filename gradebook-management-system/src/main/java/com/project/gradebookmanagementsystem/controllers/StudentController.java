@@ -28,6 +28,15 @@ public class StudentController {
         return "Hello!";
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<StudentDto> loginStudent(@RequestBody StudentDto studentDto) {
+        Student student = studentService.findByStudentIdAndName(studentDto.getId(), studentDto.getFirstName());
+        if (student == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(studentMapper.mapTo(student), HttpStatus.OK);
+    }
+
     @PostMapping("/create-student")
     public ResponseEntity<StudentDto> createStudent(@RequestBody StudentDto studentDto) {
 
