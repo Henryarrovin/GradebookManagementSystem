@@ -16,4 +16,5 @@ public interface ExamService {
 
     void deleteExam(Long id);
 
+    boolean isExists(Long id);
 }
