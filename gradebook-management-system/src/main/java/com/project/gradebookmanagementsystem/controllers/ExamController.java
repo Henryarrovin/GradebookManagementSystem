@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/exam")
+@RequestMapping("/exams")
 public class ExamController {
 
     private ExamService examService;

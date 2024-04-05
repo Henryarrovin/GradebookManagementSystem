@@ -16,4 +16,5 @@ public interface GradeService {
 
     void deleteGrade(Long id);
 
+    boolean isExists(Long id);
 }

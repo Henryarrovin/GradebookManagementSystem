@@ -37,12 +37,12 @@ public class ExamServiceImpl implements ExamService {
     public Exam updateExam(Long id, Exam exam) {
         exam.setId(id);
         return examRepository.findById(id)
-                .map(existingTeacher -> {
-                    Optional.ofNullable(exam.getTitle()).ifPresent(existingTeacher::setTitle);
-                    Optional.ofNullable(exam.getDescription()).ifPresent(existingTeacher::setDescription);
-                    Optional.ofNullable(exam.getExamDate()).ifPresent(existingTeacher::setExamDate);
-                    return examRepository.save(existingTeacher);
-                }).orElseThrow(() -> new RuntimeException("Teacher not found"));
+                .map(existingExam -> {
+                    Optional.ofNullable(exam.getTitle()).ifPresent(existingExam::setTitle);
+                    Optional.ofNullable(exam.getDescription()).ifPresent(existingExam::setDescription);
+                    Optional.ofNullable(exam.getExamDate()).ifPresent(existingExam::setExamDate);
+                    return examRepository.save(existingExam);
+                }).orElseThrow(() -> new RuntimeException("Exam not found"));
     }
 
     @Override

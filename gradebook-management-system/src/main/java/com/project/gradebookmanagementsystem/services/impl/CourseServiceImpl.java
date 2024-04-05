@@ -36,10 +36,10 @@ public class CourseServiceImpl implements CourseService {
     public Course updateCourse(Long id, Course course) {
         course.setId(id);
         return courseRepository.findById(id)
-                .map(existingTeacher -> {
-                    Optional.ofNullable(course.getName()).ifPresent(existingTeacher::setName);
-                    Optional.ofNullable(course.getTeacher()).ifPresent(existingTeacher::setTeacher);
-                    return courseRepository.save(existingTeacher);
+                .map(existingCourse -> {
+                    Optional.ofNullable(course.getName()).ifPresent(existingCourse::setName);
+                    Optional.ofNullable(course.getTeacher()).ifPresent(existingCourse::setTeacher);
+                    return courseRepository.save(existingCourse);
                 }).orElseThrow(() -> new RuntimeException("Course not found"));
     }
 

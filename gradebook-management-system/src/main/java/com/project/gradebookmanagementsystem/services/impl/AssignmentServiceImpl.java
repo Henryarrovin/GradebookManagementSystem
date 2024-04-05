@@ -35,12 +35,12 @@ public class AssignmentServiceImpl implements AssignmentService {
     public Assignment updateAssignment(Long id, Assignment assignment) {
         assignment.setId(id);
         return assignmentRepository.findById(id)
-                .map(existingTeacher -> {
-                    Optional.ofNullable(assignment.getTitle()).ifPresent(existingTeacher::setTitle);
-                    Optional.ofNullable(assignment.getDescription()).ifPresent(existingTeacher::setDescription);
-                    Optional.ofNullable(assignment.getDueDate()).ifPresent(existingTeacher::setDueDate);
-                    Optional.ofNullable(assignment.getCourse()).ifPresent(existingTeacher::setCourse);
-                    return assignmentRepository.save(existingTeacher);
+                .map(existingAssignment -> {
+                    Optional.ofNullable(assignment.getTitle()).ifPresent(existingAssignment::setTitle);
+                    Optional.ofNullable(assignment.getDescription()).ifPresent(existingAssignment::setDescription);
+                    Optional.ofNullable(assignment.getDueDate()).ifPresent(existingAssignment::setDueDate);
+                    Optional.ofNullable(assignment.getCourse()).ifPresent(existingAssignment::setCourse);
+                    return assignmentRepository.save(existingAssignment);
                 }).orElseThrow(() -> new RuntimeException("Assignment not found"));
     }
 
