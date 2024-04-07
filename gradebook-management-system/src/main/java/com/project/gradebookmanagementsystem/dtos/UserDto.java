@@ -1,7 +1,6 @@
-package com.project.gradebookmanagementsystem.models;
+package com.project.gradebookmanagementsystem.dtos;
 
 import com.project.gradebookmanagementsystem.models.enums.Role;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,21 +12,15 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "students")
-public class Student {
+public class UserDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String firstName;
     private String lastName;
     private String email;
     private LocalDate dateOfBirth;
     private String username;
     private String password;
-    @Enumerated(EnumType.STRING)
     private Role role;
 
     public Long getId() {
