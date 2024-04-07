@@ -40,11 +40,11 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManagerBean(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
-        return auth.build();
-    }
+//    @Bean
+//    public AuthenticationManager authenticationManagerBean(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+//        return auth.build();
+//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -58,4 +58,15 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return new AuthenticationManager() {
+            @Override
+            public org.springframework.security.core.Authentication authenticate(org.springframework.security.core.Authentication authentication) throws org.springframework.security.core.AuthenticationException {
+                return null;
+            }
+        };
+    }
+
 }

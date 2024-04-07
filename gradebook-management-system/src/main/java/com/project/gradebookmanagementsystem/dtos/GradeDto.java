@@ -2,9 +2,7 @@ package com.project.gradebookmanagementsystem.dtos;
 
 import com.project.gradebookmanagementsystem.models.Assignment;
 import com.project.gradebookmanagementsystem.models.Exam;
-import com.project.gradebookmanagementsystem.models.Student;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.project.gradebookmanagementsystem.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class GradeDto {
 
     private Long id;
-    private Student student;
+    private User student;
     private Assignment assignment;
     private Exam exam;
     private Double grade;
@@ -30,11 +28,11 @@ public class GradeDto {
         this.id = id;
     }
 
-    public Student getStudent() {
+    public User getStudent() {
         return student;
     }
 
-    public void setStudent(Student student) {
+    public void setStudent(User student) {
         this.student = student;
     }
 

@@ -1,8 +1,6 @@
 package com.project.gradebookmanagementsystem.dtos;
 
-import com.project.gradebookmanagementsystem.models.Teacher;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.project.gradebookmanagementsystem.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +14,7 @@ public class CourseDto {
 
     private Long id;
     private String name;
-    private Teacher teacher;
+    private User teacher;
 
     public Long getId() {
         return id;
@@ -34,11 +32,11 @@ public class CourseDto {
         this.name = name;
     }
 
-    public Teacher getTeacher() {
+    public User getTeacher() {
         return teacher;
     }
 
-    public void setTeacher(Teacher teacher) {
+    public void setTeacher(User teacher) {
         this.teacher = teacher;
     }
 }

@@ -19,8 +19,8 @@ public class Grade {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+    @JoinColumn(name = "user_id")
+    private User student;
 
     @ManyToOne
     @JoinColumn(name = "assignment_id")
@@ -40,11 +40,11 @@ public class Grade {
         this.id = id;
     }
 
-    public Student getStudent() {
+    public User getStudent() {
         return student;
     }
 
-    public void setStudent(Student student) {
+    public void setStudent(User student) {
         this.student = student;
     }
 

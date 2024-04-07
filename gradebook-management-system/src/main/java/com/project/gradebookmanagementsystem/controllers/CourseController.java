@@ -3,7 +3,6 @@ package com.project.gradebookmanagementsystem.controllers;
 import com.project.gradebookmanagementsystem.dtos.CourseDto;
 import com.project.gradebookmanagementsystem.mappers.Mapper;
 import com.project.gradebookmanagementsystem.models.Course;
-import com.project.gradebookmanagementsystem.models.Student;
 import com.project.gradebookmanagementsystem.services.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

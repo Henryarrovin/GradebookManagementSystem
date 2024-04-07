@@ -19,16 +19,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
-    @Value("${jwt.secret}")
+    @Value("${spring.jwt.secret}")
     private String secret;
 
-    @Value("${jwt.expiration}")
+    @Value("${spring.jwt.expiration}")
     private Long expiration;
 
-//    public String generateToken(UserDetails userDetails) {
-//        Map<String, Object> claims = new HashMap<>();
-//        return createToken(claims, userDetails.getUsername());
-//    }
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
