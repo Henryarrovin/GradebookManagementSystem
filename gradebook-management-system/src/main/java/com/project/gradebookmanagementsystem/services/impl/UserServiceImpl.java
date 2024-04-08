@@ -1,13 +1,20 @@
 package com.project.gradebookmanagementsystem.services.impl;
 
+import com.project.gradebookmanagementsystem.dtos.AuthResponseDto;
 import com.project.gradebookmanagementsystem.models.User;
+import com.project.gradebookmanagementsystem.repositories.RoleRepository;
 import com.project.gradebookmanagementsystem.repositories.UserRepository;
 import com.project.gradebookmanagementsystem.security.JwtTokenProvider;
 import com.project.gradebookmanagementsystem.services.UserService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,20 +22,33 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
     private JwtTokenProvider jwtTokenProvider;
+    private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
+                           JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public User createUser(User user) {
-        // Encode password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
+    }
+
+    @Override
+    public AuthResponseDto login(String username, String password) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtTokenProvider.generateToken(authentication);
+        return new AuthResponseDto(token);
     }
 
     @Override
@@ -60,19 +80,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String login(String username, String password) {
-        Optional<User> userOptional = Optional.ofNullable(userRepository.findByUsername(username));
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                return jwtTokenProvider.generateToken((UserDetails) user);
-            }
-        }
-        return null;
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     @Override
     public boolean isExists(Long id) {
         return userRepository.existsById(id);
     }
+
 }

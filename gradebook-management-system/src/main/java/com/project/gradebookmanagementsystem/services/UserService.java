@@ -1,5 +1,6 @@
 package com.project.gradebookmanagementsystem.services;
 
+import com.project.gradebookmanagementsystem.dtos.AuthResponseDto;
 import com.project.gradebookmanagementsystem.models.User;
 
 import java.util.List;
@@ -7,6 +8,9 @@ import java.util.List;
 public interface UserService {
 
     User createUser(User user);
+
+    AuthResponseDto login(String username, String password);
+
     User updateUser(Long id, User user);
 
     List<User> getAllUser();
@@ -15,8 +19,7 @@ public interface UserService {
 
     void deleteUser(Long id);
 
-    String login(String username, String password);
+    boolean existsByUsername(String username);
 
     boolean isExists(Long id);
-
 }

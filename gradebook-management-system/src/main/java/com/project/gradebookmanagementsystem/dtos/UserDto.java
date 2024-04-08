@@ -1,6 +1,6 @@
 package com.project.gradebookmanagementsystem.dtos;
 
-import com.project.gradebookmanagementsystem.models.enums.Role;
+import com.project.gradebookmanagementsystem.models.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

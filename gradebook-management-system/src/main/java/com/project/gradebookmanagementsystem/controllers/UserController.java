@@ -1,5 +1,6 @@
 package com.project.gradebookmanagementsystem.controllers;
 
+import com.project.gradebookmanagementsystem.dtos.AuthResponseDto;
 import com.project.gradebookmanagementsystem.dtos.LoginDto;
 import com.project.gradebookmanagementsystem.dtos.UserDto;
 import com.project.gradebookmanagementsystem.mappers.Mapper;
@@ -7,6 +8,8 @@ import com.project.gradebookmanagementsystem.models.User;
 import com.project.gradebookmanagementsystem.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -25,18 +28,26 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody LoginDto loginDto) {
-        return userService.login(loginDto.getUsername(), loginDto.getPassword());
+    public ResponseEntity<AuthResponseDto> loginUser(@RequestBody LoginDto loginDto) {
+        if (loginDto.getUsername() == null || loginDto.getPassword() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        AuthResponseDto token = userService.login(loginDto.getUsername(), loginDto.getPassword());
+
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @PostMapping("create-user")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
 
         if (userDto.getFirstName() == null ||
             userDto.getLastName() == null ||
             userDto.getUsername() == null ||
             userDto.getPassword() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("All required fields must be provided", HttpStatus.BAD_REQUEST);
+        }
+        if (userService.existsByUsername(userDto.getUsername())) {
+            return new ResponseEntity<>("Username already exists",HttpStatus.CONFLICT);
         }
         User user = userMapper.mapFrom(userDto);
         User createdUser = userService.createUser(user);
@@ -77,6 +88,7 @@ public class UserController {
     }
 
     @DeleteMapping("delete-user/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
