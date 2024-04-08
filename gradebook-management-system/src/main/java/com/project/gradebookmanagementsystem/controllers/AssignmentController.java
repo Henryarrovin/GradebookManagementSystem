@@ -6,6 +6,7 @@ import com.project.gradebookmanagementsystem.models.Assignment;
 import com.project.gradebookmanagementsystem.services.AssignmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class AssignmentController {
     }
 
     @PostMapping("/create-assignment")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<AssignmentDto> createAssignment(@RequestBody AssignmentDto assignmentDto) {
 
         if (assignmentDto.getTitle() == null ||
@@ -38,6 +40,7 @@ public class AssignmentController {
     }
 
     @PutMapping("update-assignment/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<AssignmentDto> updateAssignment(@PathVariable Long id, @RequestBody AssignmentDto assignmentDto) {
 
         if (!assignmentService.isExists(id)) {
@@ -50,6 +53,7 @@ public class AssignmentController {
     }
 
     @GetMapping("/get-all-assignments")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER', 'STUDENT')")
     public ResponseEntity<Iterable<AssignmentDto>> getAllAssignments() {
         Iterable<Assignment> assignments = assignmentService.getAllAssignments();
         List<AssignmentDto> assignmentDto = new ArrayList<>();
@@ -60,6 +64,7 @@ public class AssignmentController {
     }
 
     @GetMapping("/get-assignment/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER', 'STUDENT')")
     public ResponseEntity<AssignmentDto> getAssignmentById(@PathVariable Long id) {
 
         Assignment assignment = assignmentService.getAssignmentById(id);
@@ -71,6 +76,7 @@ public class AssignmentController {
     }
 
     @DeleteMapping("/delete-assignment/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<Void> deleteAssignment(@PathVariable Long id) {
         assignmentService.deleteAssignment(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

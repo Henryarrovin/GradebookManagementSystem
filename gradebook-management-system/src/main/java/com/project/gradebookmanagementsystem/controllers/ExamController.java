@@ -6,6 +6,7 @@ import com.project.gradebookmanagementsystem.models.Exam;
 import com.project.gradebookmanagementsystem.services.ExamService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class ExamController {
     }
 
     @PostMapping("/create-exam")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<ExamDto> createExam(@RequestBody ExamDto examDto) {
 
         if (examDto.getTitle() == null ||
@@ -38,6 +40,7 @@ public class ExamController {
     }
 
     @PutMapping("update-exam/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<ExamDto> updateExam(@PathVariable Long id, @RequestBody ExamDto examDto) {
 
         if (!examService.isExists(id)) {
@@ -50,6 +53,7 @@ public class ExamController {
     }
 
     @GetMapping("/get-all-exams")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER', 'STUDENT')")
     public ResponseEntity<Iterable<ExamDto>> getAllExams() {
         Iterable<Exam> exams = examService.getAllExams();
         List<ExamDto> examDto = new ArrayList<>();
@@ -60,6 +64,7 @@ public class ExamController {
     }
 
     @GetMapping("/get-exam/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER', 'STUDENT')")
     public ResponseEntity<ExamDto> getExamById(@PathVariable Long id) {
         Exam exam = examService.getExamById(id);
 

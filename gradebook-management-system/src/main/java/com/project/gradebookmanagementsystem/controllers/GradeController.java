@@ -6,6 +6,7 @@ import com.project.gradebookmanagementsystem.models.Grade;
 import com.project.gradebookmanagementsystem.services.GradeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class GradeController {
     }
 
     @PostMapping("/create-grade")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<GradeDto> createGrade(@RequestBody GradeDto gradeDto) {
         if (gradeDto.getStudent() == null ||
                 gradeDto.getAssignment() == null ||
@@ -37,6 +39,7 @@ public class GradeController {
     }
 
     @PostMapping("/update-grade/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<GradeDto> updateGrade(@PathVariable Long id, @RequestBody GradeDto gradeDto) {
         if (!gradeService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -57,6 +60,7 @@ public class GradeController {
     }
 
     @GetMapping("/get-grade/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER', 'STUDENT')")
     public ResponseEntity<GradeDto> getGradeById(@PathVariable Long id) {
         Grade grade = gradeService.getGradeById(id);
         if (!gradeService.isExists(id)) {
@@ -66,6 +70,7 @@ public class GradeController {
     }
 
     @DeleteMapping("/delete-grade/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<GradeDto> deleteGrade(@PathVariable Long id) {
         gradeService.deleteGrade(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

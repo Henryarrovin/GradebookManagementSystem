@@ -50,11 +50,12 @@ public class UserController {
             return new ResponseEntity<>("Username already exists",HttpStatus.CONFLICT);
         }
         User user = userMapper.mapFrom(userDto);
-        User createdUser = userService.createUser(user);
+        User createdUser = userService.createUser(user, userDto.getRoles());
         return new ResponseEntity<>(userMapper.mapTo(createdUser), HttpStatus.CREATED);
     }
 
     @PutMapping("update-user/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR')")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
 
         if (!userService.isExists(id)) {
@@ -67,6 +68,7 @@ public class UserController {
     }
 
     @GetMapping("get-all-user")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR')")
     public ResponseEntity<Iterable<UserDto>> getAllUsers() {
         Iterable<User> users = userService.getAllUser();
         List<UserDto> userDto = new ArrayList<>();
@@ -77,6 +79,7 @@ public class UserController {
     }
 
     @GetMapping("get-user/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR','TEACHER')")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
 
         User user = userService.getUserById(id);

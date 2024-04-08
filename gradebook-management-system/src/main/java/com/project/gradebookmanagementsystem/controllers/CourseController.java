@@ -6,6 +6,7 @@ import com.project.gradebookmanagementsystem.models.Course;
 import com.project.gradebookmanagementsystem.services.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class CourseController {
     }
 
     @PostMapping("/create-course")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR')")
     public ResponseEntity<CourseDto> createCourse(@RequestBody CourseDto courseDto) {
 
         if (courseDto.getName() == null ||
@@ -36,6 +38,7 @@ public class CourseController {
     }
 
     @PutMapping("/update-course/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR')")
     public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @RequestBody CourseDto courseDto) {
         if (!courseService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -47,6 +50,7 @@ public class CourseController {
     }
 
     @GetMapping("/get-all-courses")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER', 'STUDENT')")
     public ResponseEntity<Iterable<CourseDto>> getAllCourses() {
         Iterable<Course> courses = courseService.getAllCourses();
         List<CourseDto> courseDto = new ArrayList<>();
@@ -57,6 +61,7 @@ public class CourseController {
     }
 
     @GetMapping("/get-course/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER', 'STUDENT')")
     public ResponseEntity<CourseDto> getCourseById(@PathVariable Long id) {
 
         Course course = courseService.getCourseById(id);
@@ -68,6 +73,7 @@ public class CourseController {
     }
 
     @DeleteMapping("delete-course/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR')")
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -1,6 +1,7 @@
 package com.project.gradebookmanagementsystem.services.impl;
 
 import com.project.gradebookmanagementsystem.dtos.AuthResponseDto;
+import com.project.gradebookmanagementsystem.models.Role;
 import com.project.gradebookmanagementsystem.models.User;
 import com.project.gradebookmanagementsystem.repositories.RoleRepository;
 import com.project.gradebookmanagementsystem.repositories.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,8 +40,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User user) {
+    public User createUser(User user, List<String> roleNames) {
+
+
+        user.setFirstName(user.getFirstName());
+        user.setLastName(user.getLastName());
+        user.setEmail(user.getEmail());
+        user.setDateOfBirth(user.getDateOfBirth());
+        user.setUsername(user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        List<Role> roles = roleNames.stream()
+                .map(roleName -> roleRepository.findByName(roleName).orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
+                .collect(Collectors.toList());
+        user.setRoles(roles);
+
         return userRepository.save(user);
     }
 

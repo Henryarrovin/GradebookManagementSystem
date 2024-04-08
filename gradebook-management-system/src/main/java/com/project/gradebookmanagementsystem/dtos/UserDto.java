@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +22,7 @@ public class UserDto {
     private LocalDate dateOfBirth;
     private String username;
     private String password;
-    private Role role;
+    private List<String> roles;
 
     public Long getId() {
         return id;
@@ -79,11 +80,11 @@ public class UserDto {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }
