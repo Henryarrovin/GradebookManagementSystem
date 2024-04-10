@@ -39,6 +39,9 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(SecurityConstants.JWT_SECRET).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+            System.out.println("---------------------------------------ERROR---------------------------------------");
+            System.out.println(e.getMessage());
+            System.out.println("---------------------------------------END_ERROR---------------------------------------");
             throw new AuthenticationCredentialsNotFoundException("Jwt was expired or invalid");
         }
     }

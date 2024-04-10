@@ -75,6 +75,14 @@ public class UserServiceImpl implements UserService {
                     Optional.ofNullable(user.getLastName()).ifPresent(existingUser::setLastName);
                     Optional.ofNullable(user.getEmail()).ifPresent(existingUser::setEmail);
                     Optional.ofNullable(user.getDateOfBirth()).ifPresent(existingUser::setDateOfBirth);
+                    Optional.ofNullable(user.getUsername()).ifPresent(existingUser::setUsername);
+                    Optional.ofNullable(user.getPassword()).ifPresent(password -> existingUser.setPassword(passwordEncoder.encode(password)));
+
+                    List<Role> roles = user.getRoles().stream()
+                            .map(role -> roleRepository.findByName(role.getName()).orElseThrow(() -> new RuntimeException("Role not found: " + role.getName())))
+                            .collect(Collectors.toList());
+                    existingUser.setRoles(roles);
+
                     return userRepository.save(existingUser);
                 }).orElseThrow(() -> new RuntimeException("User not found"));
     }
