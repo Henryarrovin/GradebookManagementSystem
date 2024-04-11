@@ -26,15 +26,21 @@ public class CourseController {
 
     @PostMapping("/create-course")
     @PreAuthorize("hasAnyAuthority('ADMINISTRATOR')")
-    public ResponseEntity<CourseDto> createCourse(@RequestBody CourseDto courseDto) {
+    public ResponseEntity<?> createCourse(@RequestBody CourseDto courseDto) {
 
         if (courseDto.getName() == null ||
                 courseDto.getTeacher() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Course course = courseMapper.mapFrom(courseDto);
-        Course createdCourse = courseService.createCourse(course);
-        return new ResponseEntity<>(courseMapper.mapTo(createdCourse), HttpStatus.CREATED);
+
+        try {
+            Course course = courseMapper.mapFrom(courseDto);
+            Course createdCourse = courseService.createCourse(course);
+            return new ResponseEntity<>(courseMapper.mapTo(createdCourse), HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+
     }
 
     @PutMapping("/update-course/{id}")
@@ -44,9 +50,15 @@ public class CourseController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Course course = courseMapper.mapFrom(courseDto);
-        Course updatedCourse = courseService.updateCourse(id, course);
-        return new ResponseEntity<>(courseMapper.mapTo(updatedCourse), HttpStatus.OK);
+        try {
+            Course course = courseMapper.mapFrom(courseDto);
+            Course updatedCourse = courseService.updateCourse(id, course);
+            return new ResponseEntity<>(courseMapper.mapTo(updatedCourse), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+
     }
 
     @GetMapping("/get-all-courses")
