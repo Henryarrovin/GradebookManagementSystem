@@ -1,7 +1,9 @@
 package com.project.gradebookmanagementsystem.services.impl;
 
 import com.project.gradebookmanagementsystem.models.Assignment;
+import com.project.gradebookmanagementsystem.models.Course;
 import com.project.gradebookmanagementsystem.repositories.AssignmentRepository;
+import com.project.gradebookmanagementsystem.repositories.CourseRepository;
 import com.project.gradebookmanagementsystem.services.AssignmentService;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +14,28 @@ import java.util.Optional;
 public class AssignmentServiceImpl implements AssignmentService {
 
     private AssignmentRepository assignmentRepository;
+    private CourseRepository courseRepository;
 
-    public AssignmentServiceImpl(AssignmentRepository assignmentRepository) {
+    public AssignmentServiceImpl(AssignmentRepository assignmentRepository, CourseRepository courseRepository) {
         this.assignmentRepository = assignmentRepository;
+        this.courseRepository = courseRepository;
     }
 
     @Override
     public Assignment createAssignment(Assignment assignment) {
-        return assignmentRepository.save(assignment);
+        Course course = courseRepository.findById(assignment.getCourse().getId()).orElse(null);
+        if (course == null) {
+            throw new RuntimeException("Course not found");
+        }
+        Assignment newAssignment = new Assignment();
+        newAssignment.setTitle(assignment.getTitle());
+        newAssignment.setDescription(assignment.getDescription());
+        newAssignment.setDueDate(assignment.getDueDate());
+        newAssignment.setCourse(course);
+
+        return assignmentRepository.save(newAssignment);
     }
+
     @Override
     public List<Assignment> getAllAssignments() {
         return assignmentRepository.findAll();
@@ -34,12 +49,16 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public Assignment updateAssignment(Long id, Assignment assignment) {
         assignment.setId(id);
+        Course course = courseRepository.findById(assignment.getCourse().getId()).orElse(null);
+        if (course == null) {
+            throw new RuntimeException("Course not found");
+        }
         return assignmentRepository.findById(id)
                 .map(existingAssignment -> {
                     Optional.ofNullable(assignment.getTitle()).ifPresent(existingAssignment::setTitle);
                     Optional.ofNullable(assignment.getDescription()).ifPresent(existingAssignment::setDescription);
                     Optional.ofNullable(assignment.getDueDate()).ifPresent(existingAssignment::setDueDate);
-                    Optional.ofNullable(assignment.getCourse()).ifPresent(existingAssignment::setCourse);
+                    existingAssignment.setCourse(course);
                     return assignmentRepository.save(existingAssignment);
                 }).orElseThrow(() -> new RuntimeException("Assignment not found"));
     }

@@ -34,22 +34,31 @@ public class AssignmentController {
                 assignmentDto.getCourse() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Assignment assignment = assignmentMapper.mapFrom(assignmentDto);
-        Assignment assignmentCreated = assignmentService.createAssignment(assignment);
-        return new ResponseEntity<>(assignmentMapper.mapTo(assignmentCreated), HttpStatus.CREATED);
+
+        try {
+            Assignment assignment = assignmentMapper.mapFrom(assignmentDto);
+            Assignment assignmentCreated = assignmentService.createAssignment(assignment);
+            return new ResponseEntity<>(assignmentMapper.mapTo(assignmentCreated), HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("update-assignment/{id}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
-    public ResponseEntity<AssignmentDto> updateAssignment(@PathVariable Long id, @RequestBody AssignmentDto assignmentDto) {
+    public ResponseEntity<?> updateAssignment(@PathVariable Long id, @RequestBody AssignmentDto assignmentDto) {
 
         if (!assignmentService.isExists(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Assignment doesnt exist.",HttpStatus.NOT_FOUND);
         }
 
-        Assignment assignment = assignmentMapper.mapFrom(assignmentDto);
-        Assignment updatedAssignment = assignmentService.updateAssignment(id, assignment);
-        return new ResponseEntity<>(assignmentMapper.mapTo(updatedAssignment), HttpStatus.OK);
+        try {
+            Assignment assignment = assignmentMapper.mapFrom(assignmentDto);
+            Assignment updatedAssignment = assignmentService.updateAssignment(id, assignment);
+            return new ResponseEntity<>(assignmentMapper.mapTo(updatedAssignment), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/get-all-assignments")
