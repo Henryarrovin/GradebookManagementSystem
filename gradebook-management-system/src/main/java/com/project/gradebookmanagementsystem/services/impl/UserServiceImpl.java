@@ -50,11 +50,16 @@ public class UserServiceImpl implements UserService {
         user.setUsername(user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        List<Role> roles = roleNames.stream()
-                .map(roleName -> roleRepository.findByName(roleName).orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
-                .collect(Collectors.toList());
-        user.setRoles(roles);
-
+        if(roleNames == null) {
+            throw new RuntimeException("Role names must be provided");
+        } else {
+            List<Role> roles = roleNames.stream()
+                    .map(roleName -> roleRepository.findByName(roleName).orElseThrow(() -> {
+                        throw new RuntimeException("Role not found: " + roleName);
+                    }))
+                    .collect(Collectors.toList());
+            user.setRoles(roles);
+        }
         return userRepository.save(user);
     }
 
@@ -78,10 +83,19 @@ public class UserServiceImpl implements UserService {
                     Optional.ofNullable(user.getUsername()).ifPresent(existingUser::setUsername);
                     Optional.ofNullable(user.getPassword()).ifPresent(password -> existingUser.setPassword(passwordEncoder.encode(password)));
 
-                    List<Role> roles = user.getRoles().stream()
-                            .map(role -> roleRepository.findByName(role.getName()).orElseThrow(() -> new RuntimeException("Role not found: " + role.getName())))
-                            .collect(Collectors.toList());
-                    existingUser.setRoles(roles);
+                    Optional.ofNullable(user.getRoles()).ifPresentOrElse(
+                            roles -> {
+                                if (!roles.isEmpty()) {
+                                    List<Role> updatedRoles = roles.stream()
+                                            .map(role -> roleRepository.findByName(role.getName()).orElseThrow(() -> {
+                                                throw new RuntimeException("Role not found: " + role.getName());
+                                            }))
+                                            .collect(Collectors.toList());
+                                    existingUser.setRoles(updatedRoles);
+                                }
+                            },
+                            () -> existingUser.setRoles(Collections.emptyList())
+                    );
 
                     return userRepository.save(existingUser);
                 }).orElseThrow(() -> new RuntimeException("User not found"));
