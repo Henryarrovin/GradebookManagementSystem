@@ -34,9 +34,14 @@ public class ExamController {
                 examDto.getCourse() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Exam exam = examMapper.mapFrom(examDto);
-        Exam examCreated = examService.createExam(exam);
-        return new ResponseEntity<>(examMapper.mapTo(examCreated), HttpStatus.CREATED);
+
+        try {
+            Exam exam = examMapper.mapFrom(examDto);
+            Exam examCreated = examService.createExam(exam);
+            return new ResponseEntity<>(examMapper.mapTo(examCreated), HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("update-exam/{id}")
@@ -47,9 +52,13 @@ public class ExamController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Exam exam = examMapper.mapFrom(examDto);
-        Exam updatedExam = examService.updateExam(id, exam);
-        return new ResponseEntity<>(examMapper.mapTo(updatedExam), HttpStatus.OK);
+        try {
+            Exam exam = examMapper.mapFrom(examDto);
+            Exam updatedExam = examService.updateExam(id, exam);
+            return new ResponseEntity<>(examMapper.mapTo(updatedExam), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/get-all-exams")
@@ -72,5 +81,12 @@ public class ExamController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(examMapper.mapTo(exam), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-exam/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
+    public ResponseEntity<Void> deleteExam(@PathVariable Long id) {
+        examService.deleteExam(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
