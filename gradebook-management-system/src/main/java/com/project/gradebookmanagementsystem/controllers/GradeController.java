@@ -26,27 +26,30 @@ public class GradeController {
 
     @PostMapping("/create-grade")
     @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
-    public ResponseEntity<GradeDto> createGrade(@RequestBody GradeDto gradeDto) {
-        if (gradeDto.getStudent() == null ||
-                gradeDto.getAssignment() == null ||
-                gradeDto.getExam() == null ||
-                gradeDto.getGrade() == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> createGrade(@RequestBody GradeDto gradeDto) {
+        try {
+            Grade grade = gradeMapper.mapFrom(gradeDto);
+            Grade createdGrade = gradeService.createGrade(grade);
+            return new ResponseEntity<>(gradeMapper.mapTo(createdGrade), HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage() ,HttpStatus.BAD_REQUEST);
         }
-        Grade grade = gradeMapper.mapFrom(gradeDto);
-        Grade createdGrade = gradeService.createGrade(grade);
-        return new ResponseEntity<>(gradeMapper.mapTo(createdGrade), HttpStatus.CREATED);
     }
 
     @PostMapping("/update-grade/{id}")
     @PreAuthorize("hasAnyAuthority('ADMINISTRATOR', 'TEACHER')")
-    public ResponseEntity<GradeDto> updateGrade(@PathVariable Long id, @RequestBody GradeDto gradeDto) {
+    public ResponseEntity<?> updateGrade(@PathVariable Long id, @RequestBody GradeDto gradeDto) {
         if (!gradeService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Grade grade = gradeMapper.mapFrom(gradeDto);
-        Grade updatedGrade = gradeService.updateGrade(id, grade);
-        return new ResponseEntity<>(gradeMapper.mapTo(updatedGrade), HttpStatus.OK);
+
+        try {
+            Grade grade = gradeMapper.mapFrom(gradeDto);
+            Grade updatedGrade = gradeService.updateGrade(id, grade);
+            return new ResponseEntity<>(gradeMapper.mapTo(updatedGrade), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage() ,HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/get-all-grades")
