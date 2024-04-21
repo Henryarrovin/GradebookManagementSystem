@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/assignment")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AssignmentController {
 
     private AssignmentService assignmentService;
