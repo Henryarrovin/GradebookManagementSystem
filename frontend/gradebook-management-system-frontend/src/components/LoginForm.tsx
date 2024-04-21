@@ -2,6 +2,7 @@ import APlusLogo from "../assets/A+.jpg";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 
 const LoginForm = () => {
   const loginSchema = z.object({
@@ -21,6 +22,14 @@ const LoginForm = () => {
 
   const onSubmit = (data: Login) => {
     console.log(data);
+    axios
+      .post("http://localhost:8085/users/login", data)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
