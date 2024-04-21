@@ -1,5 +1,6 @@
 package com.project.gradebookmanagementsystem.security;
 
+import com.project.gradebookmanagementsystem.repositories.RoleRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,12 +14,19 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
+    private RoleRepository roleRepository;
+    public JwtTokenProvider(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();
+
         Date currentDate = new Date();
         Date expiryDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
         String token = Jwts.builder()
                 .setSubject(username)
+                .claim("role", roleRepository.findByName(username))
                 .setIssuedAt(currentDate)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.JWT_SECRET)

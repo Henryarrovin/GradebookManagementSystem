@@ -3,6 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const LoginForm = () => {
   const loginSchema = z.object({
@@ -21,11 +22,12 @@ const LoginForm = () => {
   });
 
   const onSubmit = (data: Login) => {
-    console.log(data);
     axios
       .post("http://localhost:8085/users/login", data)
       .then((response) => {
-        console.log(response);
+        const token = response.data.accessToken;
+        const decodedToken = jwtDecode(token);
+        console.log(decodedToken);
       })
       .catch((error) => {
         console.log(error);
