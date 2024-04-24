@@ -1,6 +1,9 @@
 package com.project.gradebookmanagementsystem.security;
 
+import com.project.gradebookmanagementsystem.models.Role;
+import com.project.gradebookmanagementsystem.models.User;
 import com.project.gradebookmanagementsystem.repositories.RoleRepository;
+import com.project.gradebookmanagementsystem.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -9,24 +12,32 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-
+import java.util.List;
 
 @Component
 public class JwtTokenProvider {
 
-    private RoleRepository roleRepository;
-    public JwtTokenProvider(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    private UserRepository userRepository;
+    public JwtTokenProvider(RoleRepository roleRepository, UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
 
+        List<Role> roles = user.getRoles();
+
+        Role role = roles.isEmpty() ? null : roles.get(0);
+        if (role == null) {
+            throw new IllegalStateException("User role not found");
+        }
         Date currentDate = new Date();
         Date expiryDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
         String token = Jwts.builder()
                 .setSubject(username)
-                .claim("role", roleRepository.findByName(username))
+                .claim("role", role.getName())
                 .setIssuedAt(currentDate)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.JWT_SECRET)
@@ -34,12 +45,21 @@ public class JwtTokenProvider {
         return token;
     }
 
+
     public String getUsernameFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(SecurityConstants.JWT_SECRET)
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
+    }
+
+    public String getRoleFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(SecurityConstants.JWT_SECRET)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role", String.class);
     }
 
     public boolean validateToken(String token) {
@@ -54,3 +74,4 @@ public class JwtTokenProvider {
         }
     }
 }
+

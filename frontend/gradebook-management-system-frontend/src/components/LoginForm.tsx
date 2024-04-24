@@ -3,9 +3,16 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+
+interface CustomJwtPayload extends JwtPayload {
+  role: string;
+}
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+
   const loginSchema = z.object({
     username: z.string().min(1, { message: "Username is required" }),
     password: z.string().min(1, { message: "Password is required" }),
@@ -26,8 +33,14 @@ const LoginForm = () => {
       .post("http://localhost:8085/users/login", data)
       .then((response) => {
         const token = response.data.accessToken;
-        const decodedToken = jwtDecode(token);
-        console.log(decodedToken);
+        const decodedToken = jwtDecode<CustomJwtPayload>(token);
+        const role = decodedToken.role;
+        console.log(role);
+        if (role === "ADMINISTRATOR") {
+          navigate("/teacher-dashboard");
+        } else if (role === "STUDENT") {
+          navigate("/student-dashboard");
+        }
       })
       .catch((error) => {
         console.log(error);
