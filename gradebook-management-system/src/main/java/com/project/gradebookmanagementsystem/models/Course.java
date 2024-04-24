@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,12 +22,28 @@ public class Course {
 
     private String name;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_courses",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private List<User> enrolledStudents;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User teacher;
 
     public Long getId() {
         return id;
+    }
+
+    public List<User> getEnrolledStudents() {
+        return enrolledStudents;
+    }
+
+    public void setEnrolledStudents(List<User> enrolledStudents) {
+        this.enrolledStudents = enrolledStudents;
     }
 
     public void setId(Long id) {

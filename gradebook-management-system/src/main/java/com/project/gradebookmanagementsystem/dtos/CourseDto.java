@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,6 +16,7 @@ public class CourseDto {
 
     private Long id;
     private String name;
+    private List<User> enrolledStudents;
     private User teacher;
 
     public Long getId() {
@@ -30,6 +33,14 @@ public class CourseDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<User> getEnrolledStudents() {
+        return enrolledStudents;
+    }
+
+    public void setEnrolledStudents(List<User> enrolledStudents) {
+        this.enrolledStudents = enrolledStudents;
     }
 
     public User getTeacher() {
