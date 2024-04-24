@@ -14,6 +14,10 @@
   cursor: pointer;
 }
 
+.link-pointer {
+  cursor: pointer;
+}
+
 /* body {
   display: flex;
   justify-content: center;
