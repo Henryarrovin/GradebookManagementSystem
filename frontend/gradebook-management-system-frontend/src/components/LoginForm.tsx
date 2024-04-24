@@ -34,9 +34,11 @@ const LoginForm = () => {
       .then((response) => {
         const token = response.data.accessToken;
         const decodedToken = jwtDecode<CustomJwtPayload>(token);
+        console.log(decodedToken.sub);
+
         const role = decodedToken.role;
-        console.log(role);
-        if (role === "ADMINISTRATOR") {
+        sessionStorage.setItem("jwt", token);
+        if (role === "ADMINISTRATOR" || "TEACHER") {
           navigate("/teacher-dashboard");
         } else if (role === "STUDENT") {
           navigate("/student-dashboard");
@@ -49,10 +51,14 @@ const LoginForm = () => {
 
   return (
     <div>
+      <h1>Grade Book Management System</h1>
       <img src={APlusLogo} alt="A+ logo" width={100} height={100} />
       <h1>Login Form</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-3">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="justify-content-center"
+      >
+        <div className="mb-3 d-flex flex-column align-items-center">
           <label htmlFor="username" className="form-label">
             Username
           </label>
@@ -62,12 +68,13 @@ const LoginForm = () => {
             className="form-control"
             type="text"
             placeholder="Username"
+            style={{ width: "50%" }}
           />
           {errors.username && (
             <p className="text-danger">{errors.username.message}</p>
           )}
         </div>
-        <div className="mb-3">
+        <div className="mb-3 d-flex flex-column align-items-center">
           <label htmlFor="password" className="form-label">
             Password
           </label>
@@ -77,6 +84,7 @@ const LoginForm = () => {
             className="form-control"
             type="password"
             placeholder="Password"
+            style={{ width: "50%" }}
           />
           {errors.password && (
             <p className="text-danger">{errors.password.message}</p>
